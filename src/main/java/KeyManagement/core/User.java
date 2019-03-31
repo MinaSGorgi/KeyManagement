@@ -1,7 +1,6 @@
 package core;
 
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 
@@ -45,17 +44,21 @@ class User {
 
     /**
      * Applies following constrain(s) when signing message:
-     *      . 0 <= message <= p - 1 // TODO: IMPLEMENT ME
+     *      . 0 <= message <= p - 1
      *      . 1 < k < p − 1 and gcd(k, p − 1) = 1
      *      . s != 0
      * 
      * @param message message to be digitally signed
      * @return
      */
-    public Signature sign(BigInteger message) {
+    public Signature sign(BigInteger message) throws Exception {
         BigInteger p = gamal.getP(), pm1 = p.subtract(BI_ONE), g = gamal.getG();
         BigInteger hashedMessage = gamal.hash(message);
         BigInteger r, s, kinv;
+
+        if (message.compareTo(BigInteger.ZERO) < 0 || message.compareTo(pm1) > 0) {
+            throw new Exception("0 <= message <= " + pm1 + " given value is: " + message);
+        }
 
         do {
             BigInteger k;
@@ -83,7 +86,7 @@ class User {
         return v1.compareTo(v2) == 0;
     }
 
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    public static void main(String[] args) throws Exception {
         int nBits = Integer.parseInt(args[0]);
         String hash = args[1];
 
