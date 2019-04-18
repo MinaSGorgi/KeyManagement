@@ -128,7 +128,9 @@ class User {
     public BigInteger unpackPacket(Packet packet, BigInteger otherGamalPublicKey) throws Exception {
         BigInteger decryptedMessage = decrypt(packet.getMessage());
         boolean verified = verify(packet.getSignature(), packet.getMessage(), otherGamalPublicKey);
-        System.out.println(verified ? "Verified" : "Not Verified");
+        if(!verified) {
+            throw new Exception("Signature not verified!");
+        }
 
         return decryptedMessage;
     }
@@ -152,9 +154,11 @@ class User {
         System.out.println();
 
         System.out.println("Gamal Fail Test...");
-        Packet packet1 = user2.packPacket(message, user1.getRSAPublicKey());
-        BigInteger decryptedMessage1 = user1.unpackPacket(packet1, user3.getGamalPublicKey());
-        System.out.println("decrypted message = " + decryptedMessage1);
-        System.out.println(decryptedMessage1.equals(message) ? "Dectypted Succesfully" : "Failed" );      
+        Packet packet1 = user2.packPacket(message, user1.getRSAPublicKey()); 
+        try {
+            user1.unpackPacket(packet1, user3.getGamalPublicKey());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }   
     }
 }

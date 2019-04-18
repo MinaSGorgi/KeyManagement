@@ -16,12 +16,11 @@ java core.User <hash> <ElGamal key size> <message>
 $ java core.User SHA-256 1024 123456789
 
 Sucess Test...
-Verified
 decrypted message = 123456789
 Dectypted Succesfully
 
 Gamal Fail Test...
-Not Verified
-decrypted message = 123456789
-Dectypted Succesfully
+java.lang.Exception: Signature not verified!
+        at core.User.unpackPacket(User.java:132)
+        at core.User.main(User.java:159)
 ```
