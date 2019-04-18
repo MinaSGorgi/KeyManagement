@@ -9,17 +9,17 @@ import java.math.BigInteger;
  * @version 1.0
  */
 public class Signature {
-    private final BigInteger r, s;
+    private final BigInteger s1, s2;
 
-    public Signature(BigInteger r, BigInteger s) {
-        this.r = r;
-        this.s = s;
+    public Signature(BigInteger s1, BigInteger s2) {
+        this.s1 = s1;
+        this.s2 = s2;
     }
 
-    public BigInteger getR() {return r;}
-    public BigInteger getS() {return s;}
+    public BigInteger getS1() {return s1;}
+    public BigInteger getS2() {return s2;}
 
     public void print() {
-        System.out.println("r = " + r + " s = " + s);
+        System.out.println("s1 = " + s1 + " s2 = " + s2);
     }
 }
