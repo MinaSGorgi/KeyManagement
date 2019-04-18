@@ -22,13 +22,15 @@ class ElGamal {
     /**
      * Applies following constrain(s) when generating ElGamal system parameters:
      *      - q is a prime of nBits length
-     *      - a < q and g is a generator of the multiplicative group of integers modulo q
+     *      - a < q
+     *      - g should be a generator of the multiplicative group of integers modulo q
+     *      but this is inpractical for very large numbers
      *      - hash is a collision-resistant hash function
      */
     public ElGamal(int nBits, String hash) throws NoSuchAlgorithmException {
         messageDigest = MessageDigest.getInstance(hash);
         q = BigInteger.probablePrime(nBits, secureRandom);
-        a = new BigInteger("2"); // TODO: FIX ME
+        a = new BigInteger(nBits, secureRandom).mod(q);
         this.nBits = nBits;
     }
 
