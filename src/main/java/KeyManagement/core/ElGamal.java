@@ -17,6 +17,7 @@ class ElGamal {
 
     private final MessageDigest messageDigest;
     private final BigInteger q, a;
+    private final int nBits;
 
     /**
      * Applies following constrain(s) when generating ElGamal system parameters:
@@ -28,10 +29,12 @@ class ElGamal {
         messageDigest = MessageDigest.getInstance(hash);
         q = BigInteger.probablePrime(nBits, secureRandom);
         a = new BigInteger("2"); // TODO: FIX ME
+        this.nBits = nBits;
     }
 
     public BigInteger getQ() {return q;}
     public BigInteger getA() {return a;}
+    public int getNBits() {return nBits;}
 
     public void print() {
         System.out.println("q = " + q + " a = " + a);
