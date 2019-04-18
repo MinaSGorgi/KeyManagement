@@ -29,6 +29,7 @@ class User {
     /**
      * Applies following constrain(s) when generating user keys:
      * . 1 < privateKey < q − 2.
+     * nBits used for gamal can not be less than 512 
      */
     public User(ElGamal gamal) throws Exception {
         // Initialize RSA
