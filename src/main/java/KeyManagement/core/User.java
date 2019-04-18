@@ -20,19 +20,19 @@ class User {
 
     /**
      * Applies following constrain(s) when generating user keys:
-     *      . 1 < privateKey < p − 2.
+     *      . 1 < privateKey < q − 2.
      */
     public User(ElGamal gamal) {
-        BigInteger p = gamal.getP(), g = gamal.getG();
+        BigInteger q = gamal.getQ(), a = gamal.getA();
 
         BigInteger tempPrivateKey;
         do {
-            tempPrivateKey = new BigInteger(p.bitLength(), secureRandom);
+            tempPrivateKey = new BigInteger(q.bitLength(), secureRandom);
         } while(BI_ONE.compareTo(tempPrivateKey) >= 0
-                || tempPrivateKey.compareTo(p.subtract(BI_TWO)) >= 0);
+                || tempPrivateKey.compareTo(q.subtract(BI_TWO)) >= 0);
 
         privateKey = tempPrivateKey;
-        publicKey = g.modPow(privateKey, p);
+        publicKey = a.modPow(privateKey, q);
         this.gamal = gamal;
     }
 
@@ -44,44 +44,44 @@ class User {
 
     /**
      * Applies following constrain(s) when signing message:
-     *      . 0 <= message <= p - 1
-     *      . 1 < k < p − 1 and gcd(k, p − 1) = 1
+     *      . 0 <= message <= q - 1
+     *      . 1 < k < q − 1 and gcd(k, q − 1) = 1
      *      . s != 0
      * 
      * @param message message to be digitally signed
      * @return
      */
     public Signature sign(BigInteger message) throws Exception {
-        BigInteger p = gamal.getP(), pm1 = p.subtract(BI_ONE), g = gamal.getG();
+        BigInteger q = gamal.getQ(), qm1 = q.subtract(BI_ONE), a = gamal.getA();
         BigInteger hashedMessage = gamal.hash(message);
         BigInteger s1, s2, kinv;
 
-        if (message.compareTo(BigInteger.ZERO) < 0 || message.compareTo(pm1) > 0) {
-            throw new Exception("0 <= message <= " + pm1 + " given value is: " + message);
+        if (message.compareTo(BigInteger.ZERO) < 0 || message.compareTo(qm1) > 0) {
+            throw new Exception("0 <= message <= " + qm1 + " given value is: " + message);
         }
 
         do {
             BigInteger k;
             do {
-                k = new BigInteger(p.bitLength(), secureRandom);
-            } while(BI_ONE.compareTo(k) >= 0 || k.compareTo(pm1) >= 0
-                    || k.gcd(pm1).compareTo(BI_ONE) != 0);
+                k = new BigInteger(q.bitLength(), secureRandom);
+            } while(BI_ONE.compareTo(k) >= 0 || k.compareTo(qm1) >= 0
+                    || k.gcd(qm1).compareTo(BI_ONE) != 0);
     
-            kinv = k.modInverse(p.subtract(BI_ONE));
-            s1 = g.modPow(k, p);
-            s2 = (hashedMessage.subtract(privateKey.multiply(s1))).multiply(kinv).mod(p.subtract(BI_ONE));
+            kinv = k.modInverse(q.subtract(BI_ONE));
+            s1 = a.modPow(k, q);
+            s2 = (hashedMessage.subtract(privateKey.multiply(s1))).multiply(kinv).mod(q.subtract(BI_ONE));
         } while(s2.compareTo(BigInteger.ZERO) == 0);
 
         return new Signature(s1, s2);
     }
 
     public boolean verify(Signature signature, BigInteger message, BigInteger otherPublicKey) {
-        BigInteger p = gamal.getP(), g = gamal.getG();
+        BigInteger q = gamal.getQ(), a = gamal.getA();
         BigInteger s1 = signature.getS1(), s2 = signature.getS2();
         BigInteger hashedMessage = gamal.hash(message);
 
-        BigInteger v1 = g.modPow(hashedMessage, p);
-        BigInteger v2 = otherPublicKey.modPow(s1, p).multiply(s1.modPow(s2, p)).mod(p);
+        BigInteger v1 = a.modPow(hashedMessage, q);
+        BigInteger v2 = otherPublicKey.modPow(s1, q).multiply(s1.modPow(s2, q)).mod(q);
 
         return v1.compareTo(v2) == 0;
     }
@@ -96,7 +96,7 @@ class User {
         BigInteger message;
         do {
             message = new BigInteger(nBits, new SecureRandom());
-        } while(message.compareTo(gamal.getP()) >= 0);
+        } while(message.compareTo(gamal.getQ()) >= 0);
         System.out.println("message " + message);
 
         User user1 = new User(gamal);

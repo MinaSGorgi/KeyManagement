@@ -16,25 +16,25 @@ class ElGamal {
     private final static SecureRandom secureRandom = new SecureRandom();
 
     private final MessageDigest messageDigest;
-    private final BigInteger p, g;
+    private final BigInteger q, a;
 
     /**
      * Applies following constrain(s) when generating ElGamal system parameters:
-     *      - p is a prime of nBits length
-     *      - g < p and g is a generator of the multiplicative group of integers modulo p
+     *      - q is a prime of nBits length
+     *      - a < q and g is a generator of the multiplicative group of integers modulo q
      *      - hash is a collision-resistant hash function
      */
     public ElGamal(int nBits, String hash) throws NoSuchAlgorithmException {
         messageDigest = MessageDigest.getInstance(hash);
-        p = BigInteger.probablePrime(nBits, secureRandom);
-        g = new BigInteger("2"); // TODO: FIX ME
+        q = BigInteger.probablePrime(nBits, secureRandom);
+        a = new BigInteger("2"); // TODO: FIX ME
     }
 
-    public BigInteger getP() {return p;}
-    public BigInteger getG() {return g;}
+    public BigInteger getQ() {return q;}
+    public BigInteger getA() {return a;}
 
     public void print() {
-        System.out.println("p = " + p + " g = " + g);
+        System.out.println("q = " + q + " a = " + a);
     }
 
     public BigInteger hash(BigInteger message) {
